@@ -3,232 +3,249 @@
 <head>
   <meta charset="UTF-8">
   <title>QuantumClash - Gun & Melee Edition</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=800, initial-scale=1">
   <!-- Phaser CDN -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
   <style>
-    body { background: linear-gradient(180deg, #000011 0%, #001122 100%); color: #fff; margin: 0; font-family: 'Arial', sans-serif; overflow-x: hidden; }
-    #header { background: #222; padding: 10px; text-align: center; box-shadow: 0 2px 10px #00ffff; }
-    #loginForm { display: inline-block; margin-top: 10px; }
-    #loginForm input { padding: 5px; margin: 5px; border: 1px solid #00ffff; background: #000; color: #fff; }
-    #loginForm button { padding: 5px 10px; background: #00ffff; border: none; color: #000; cursor: pointer; }
-    #gameContainer { margin: 20px auto; width: 800px; height: 600px; background: #000; box-shadow: 0 0 20px #00ffff; border: 2px solid #00ffff; }
-    h1 { margin: 0; color: #00ffff; text-shadow: 0 0 10px #00ffff; }
-    .credit { margin: 5px 0; color: #aaa; }
-    #footer { background: #222; padding: 20px; text-align: center; margin-top: 20px; border-top: 2px solid #00ffff; }
-    #footer a { color: #00ffff; text-decoration: none; margin: 0 10px; }
-    #footer .section { margin: 10px 0; text-align: left; max-width: 800px; margin: 10px auto; }
-    .sticker { position: absolute; width: 50px; height: 50px; background: url('https://opengameart.org/sites/default/files/sticker_0.png') no-repeat; opacity: 0.7; }
-    #termsModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; }
-    #termsModal .content { background: #222; margin: 10% auto; padding: 20px; width: 80%; max-width: 600px; border: 2px solid #00ffff; }
-    #termsModal .close { float: right; cursor: pointer; color: #ff0000; }
+    body { background: #191b1f; color: #fff; margin: 0;}
+    #gameContainer { margin: 0 auto; width: 800px; height: 600px; }
+    h1 { text-align: center; font-family: Arial, sans-serif; margin: 20px 0 10px 0; }
+    .credit { text-align: center; margin-bottom: 8px; color: #aaa; }
   </style>
 </head>
 <body>
-  <div id="header">
-    <h1>QuantumClash: Gun & Melee Edition</h1>
-    <div class="credit">by SHIVAM SINGH PATEL-stack &bull; <a href="https://phaser.io/" target="_blank">Phaser.js</a></div>
-    <div id="loginForm">
-      <input type="text" id="username" placeholder="Username">
-      <input type="password" id="password" placeholder="Password">
-      <button onclick="login()">Login</button>
-      <button onclick="signup()">Sign Up</button>
-      <span id="userStatus">Not logged in</span>
-    </div>
-  </div>
+  <h1>QuantumClash: Gun & Melee Edition</h1>
+  <div class="credit">by SHIVAM SINGH PATEL-stack &bull; <a href="https://phaser.io/" style="color:#89f" target="_blank">Phaser.js</a></div>
   <div id="gameContainer"></div>
-  <div class="sticker" style="top: 200px; left: 100px;"></div>
-  <div class="sticker" style="top: 400px; right: 100px;"></div>
-  <div id="footer">
-    <div class="section">
-      <h3>About QuantumClash</h3>
-      <p>QuantumClash is a thrilling 2-player local multiplayer sci-fi shooter where you battle waves of enemies in dynamic arenas. Use guns, melee attacks, and quantum abilities like dashes and shields to survive. Collect power-ups, destroy obstacles, and climb through 5 levels of increasing difficulty. Features realistic physics, varied enemy types (basic, runners, shooters, bosses), scoring, and immersive effects. Total playtime: 10+ minutes per session!</p>
-      <p><strong>Story:</strong> In a futuristic world, two heroes must defend quantum portals from alien invaders. Team up or compete in epic clashes!</p>
-      <p><strong>Features:</strong> 2-player co-op/competitive, destructible environments, special abilities, particle effects, sound, and more.</p>
-    </div>
-    <div class="section">
-      <h3>How to Play</h3>
-      <p><strong>Controls:</strong></p>
-      <ul>
-        <li>Player 1: W/A/S/D (move/jump), J (shoot), K (melee), L (dash)</li>
-        <li>Player 2: Arrow keys (move/jump), NumPad 0 (shoot), NumPad 1 (melee), NumPad 2 (shield)</li>
-        <li>Press P to pause. Collect power-ups for abilities.</li>
-      </ul>
-      <p><strong>Tips:</strong> Use cover, coordinate attacks, and manage health/power bars.</p>
-    </div>
-    <div class="section">
-      <h3>Contact Us</h3>
-      <p>Email: your.email@example.com | Phone: +1-123-456-7890 | Developer: Shivam Singh Patel</p>
-      <p>Address: 123 Quantum Street, Tech City, USA</p>
-    </div>
-    <div class="section">
-      <a href="#" onclick="showTerms()">Terms & Conditions</a> | <a href="#">Privacy Policy</a> | <a href="#">FAQ</a>
-    </div>
-    <div class="section">
-      <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">Discord</a></p>
-    </div>
-    <div class="section">
-      <p>&copy; 2023 QuantumClash. All rights reserved.</p>
-    </div>
-  </div>
-  <div id="termsModal">
-    <div class="content">
-      <span class="close" onclick="hideTerms()">&times;</span>
-      <h2>Terms & Conditions</h2>
-      <p>1. By using QuantumClash, you agree to these terms.</p>
-      <p>2. User data is stored securely on our servers.</p>
-      <p>3. No real money transactions; for entertainment only.</p>
-      <p>4. Contact us for issues.</p>
-      <p>Full terms available upon request.</p>
-    </div>
-  </div>
   <script>
-    let loggedInUser = localStorage.getItem('user') || null;
-    document.getElementById('userStatus').textContent = loggedInUser ? `Logged in as ${loggedInUser}` : 'Not logged in';
-
-    function login() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      if (localStorage.getItem(user) === pass) {
-        loggedInUser = user;
-        localStorage.setItem('user', user);
-        document.getElementById('userStatus').textContent = `Logged in as ${user}`;
-        alert('Login successful! Game unlocked.');
-      } else {
-        alert('Invalid credentials.');
-      }
+class QuantumClash extends Phaser.Scene {
+    preload() {
+        // Placeholder spritesheets & images (public domain/CC0)
+        this.load.spritesheet('fighter1', 'https://opengameart.org/sites/default/files/Green-Cap-Character-16x18.png', { frameWidth: 16, frameHeight: 18 });
+        this.load.spritesheet('fighter2', 'https://opengameart.org/sites/default/files/ManBlue_0.png', { frameWidth: 16, frameHeight: 18 });
+        this.load.image('bullet', 'https://opengameart.org/sites/default/files/laserBlue01.png');
+        this.load.image('gun', 'https://opengameart.org/sites/default/files/gun_0.png');
+        this.load.image('arena1', 'https://opengameart.org/sites/default/files/arena_tile.png');
+        this.load.image('arena2', 'https://opengameart.org/sites/default/files/tundra_tile_0.png');
+        this.load.image('powerup', 'https://opengameart.org/sites/default/files/coinGold_0.png');
+        this.load.image('explosion', 'https://opengameart.org/sites/default/files/explosion1_0.png');
+        // Placeholder sounds (freesound.org, CC0)
+        this.load.audio('shoot', 'https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa1f28.mp3');
+        this.load.audio('punch', 'https://cdn.pixabay.com/audio/2022/03/15/audio_115b9e2b3c.mp3');
     }
 
-    function signup() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      if (user && pass) {
-        localStorage.setItem(user, pass);
-        alert('Sign up successful! Now login.');
-      } else {
-        alert('Enter username and password.');
-      }
-    }
-
-    function showTerms() {
-      document.getElementById('termsModal').style.display = 'block';
-    }
-
-    function hideTerms() {
-      document.getElementById('termsModal').style.display = 'none';
-    }
-
-    const config = {
-      type: Phaser.AUTO,
-      parent: 'gameContainer',
-      width: 800,
-      height: 600,
-      physics: { default: 'arcade', arcade: { gravity: { y: 300 } } },
-      scene: QuantumClash
-    };
-
-    new Phaser.Game(config);
-
-    class QuantumClash extends Phaser.Scene {
-      preload() {
-        // Reliable CC0 assets for characters
-        this.load.spritesheet('fighter1', 'https://opengameart.org/sites/default/files/characters_hero_male.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('fighter2', 'https://opengameart.org/sites/default/files/characters_hero_female.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('enemy_basic', 'https://opengameart.org/sites/default/files/enemies_basic.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('enemy_runner', 'https://opengameart.org/sites/default/files/enemies_runner.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('enemy_shooter', 'https://opengameart.org/sites/default/files/enemies_shooter.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('boss', 'https://opengameart.org/sites/default/files/boss_enemy.png', { frameWidth: 128, frameHeight: 128 });
-        this.load.image('bullet', 'https://opengameart.org/sites/default/files/energy_bolt.png');
-        this.load.image('gun', 'https://opengameart.org/sites/default/files/plasma_gun.png');
-        this.load.image('arena1', 'https://opengameart.org/sites/default/files/sci_fi_floor.png');
-        this.load.image('arena2', 'https://opengameart.org/sites/default/files/ice_floor.png');
-        this.load.image('arena3', 'https://opengameart.org/sites/default/files/desert_floor.png');
-        this.load.image('powerup', 'https://opengameart.org/sites/default/files/power_orb.png');
-        this.load.image('healthpack', 'https://opengameart.org/sites/default/files/health_orb.png');
-        this.load.image('explosion', 'https://opengameart.org/sites/default/files/explosion_anim.png');
-        this.load.image('shield', 'https://opengameart.org/sites/default/files/shield_effect.png');
-        this.load.image('crate', 'https://opengameart.org/sites/default/files/metal_box.png');
-        this.load.image('title', 'https://opengameart.org/sites/default/files/title_card.png');
-        this.load.image('icon_dash', 'https://opengameart.org/sites/default/files/dash_icon.png');
-        this.load.image('icon_shield', 'https://opengameart.org/sites/default/files/shield_icon.png');
-        this.load.audio('shoot', 'https://cdn.pixabay.com/download/audio/2022/07/26/audio_124bfa1f28.mp3?filename=laser_shoot.mp3');
-        this.load.audio('punch', 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9e2b3c.mp3?filename=punch.mp3');
-        this.load.audio('bgm', 'https://cdn.pixabay.com/download/audio/2022/08/01/audio_123456.mp3?filename=bg_music.mp3');
-        this.load.audio('explosion_sound', 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_987654.mp3?filename=explosion.mp3');
-      }
-
-      create() {
-        if (!loggedInUser) {
-          this.add.text(400, 300, 'Please login to play!', { fontSize: '32px', fill: '#ff0000' }).setOrigin(0.5);
-          return;
-        }
-
-        this.bgm = this.sound.add('bgm', { loop: true, volume: 0.5 });
-        this.bgm.play();
-
-        this.titleImage = this.add.image(400, 300, 'title').setScale(1.5);
-        this.startText = this.add.text(400, 500, 'Press SPACE to Start', { fontSize: '24px', fill: '#00ff00' }).setOrigin(0.5);
-        this.input.keyboard.on('keydown-SPACE', () => {
-          this.titleImage.destroy();
-          this.startText.destroy();
-          this.startGame();
-        });
-      }
-
-      startGame() {
+    create() {
+        // Level system for 10+ minutes
         this.level = 1;
         this.wave = 1;
         this.maxLevels = 5;
-        this.timer = this.time.addEvent({ delay: 150000, callback: this.nextLevel, callbackScope: this });
+        this.timer = this.time.addEvent({ delay: 150000, callback: this.nextLevel, callbackScope: this }); // 2.5 min per level
 
-        this.arena = this.add.image(400, 300, 'arena1').setScale(2.5);
-        this.stars = this.add.particles('powerup').createEmitter({ x: { min: 0, max: 800 }, y: 0, speedY: 50, scale: 0.1, alpha: 0.5, lifespan: 10000 });
+        // Arena
+        this.arena = this.add.image(400, 300, 'arena1').setScale(50);
 
-        // Players (characters added)
-        this.playerSkins = ['fighter1', 'fighter2'];
-        this.player1Skin = this.playerSkins[0];
-        this.player2Skin = this.playerSkins[1];
-        this.player1 = this.physics.add.sprite(200, 400, this.player1Skin).setCollideWorldBounds(true).setScale(1.5).setTint(0x00ffff);
-        this.player2 = this.physics.add.sprite(600, 400, this.player2Skin).setCollideWorldBounds(true).setScale(1.5).setTint(0xff00ff);
+        // Players (2-player local)
+        this.player1 = this.physics.add.sprite(200, 400, 'fighter1').setCollideWorldBounds(true).setScale(3);
+        this.player2 = this.physics.add.sprite(600, 400, 'fighter2').setCollideWorldBounds(true).setScale(3);
         this.player1.hasGun = true;
         this.player2.hasGun = true;
 
         // Animations
-        ['fighter1', 'fighter2'].forEach(skin => {
-          this.anims.create({ key: `idle_${skin}`, frames: this.anims.generateFrameNumbers(skin, { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
-          this.anims.create({ key: `run_${skin}`, frames: this.anims.generateFrameNumbers(skin, { start: 4, end: 11 }), frameRate: 12, repeat: -1 });
-          this.anims.create({ key: `jump_${skin}`, frames: this.anims.generateFrameNumbers(skin, { start: 12, end: 15 }), frameRate: 8 });
-          this.anims.create({ key: `hurt_${skin}`, frames: this.anims.generateFrameNumbers(skin, { start: 16, end: 17 }), frameRate: 10 });
-        });
-        this.player1.play(`idle_${this.player1Skin}`);
-        this.player2.play(`idle_${this.player2Skin}`);
+        this.anims.create({ key: 'idle1', frames: this.anims.generateFrameNumbers('fighter1', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
+        this.anims.create({ key: 'shoot1', frames: this.anims.generateFrameNumbers('fighter1', { start: 4, end: 5 }), frameRate: 8 });
+        this.anims.create({ key: 'idle2', frames: this.anims.generateFrameNumbers('fighter2', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
+        this.player1.play('idle1');
+        this.player2.play('idle2');
 
         // Guns and bullets
         this.bullets1 = this.physics.add.group();
         this.bullets2 = this.physics.add.group();
-        this.gun1 = this.add.image(this.player1.x + 30, this.player1.y, 'gun').setScale(1.2).setDepth(2);
-        this.gun2 = this.add.image(this.player2.x - 30, this.player2.y, 'gun').setScale(1.2).setDepth(2);
+        this.gun1 = this.add.image(this.player1.x + 20, this.player1.y, 'gun').setScale(2).setDepth(2);
+        this.gun2 = this.add.image(this.player2.x - 20, this.player2.y, 'gun').setScale(2).setDepth(2);
 
-        // Enemies (characters added)
+        // Enemies (waves)
         this.enemies = this.physics.add.group();
-        this.enemyBullets = this.physics.add.group();
         this.spawnWave();
 
-        // Obstacles
-        this.obstacles = this.physics.add.staticGroup();
-        for (let i = 0; i < 5; i++) {
-          let obs = this.obstacles.create(Phaser.Math.Between(200, 600), Phaser.Math.Between(200, 400), 'crate').setScale(1.5);
-          obs.health = 50;
-        }
-
-        // HUD
+        // Health/Power
         this.health1 = 100;
         this.health2 = 100;
         this.power1 = 0;
         this.power2 = 0;
-        this.add.image(20, 50, 'healthpack').setScale(0.5);
-        this.healthBar1 = this.add.graphics().fillStyle(0x00ff00).fillRect(50, 50, 200, 20).lineStyle(2, 0xffffff).strokeRect(50, 50, 200, 20);
-        this.add.image(20, 80, 'powerup').setScale(0.5);
-        this.powerBar1 = this.add.graphics().fillStyle(0x0000ff).fillRect(50, 80, 0, 10).lineStyle(2, 0xffffff).strokeRect(50, 80, 200, 10);
-        this.add.image(520, 50, 'healthpack').setScale(0.5);
-        this.healthBar2 = this.add.graphics().fillStyle(0x00ff
+        this.healthBar1 = this.add.graphics().fillStyle(0x00ff00).fillRect(50, 50, 200, 20);
+        this.powerBar1 = this.add.graphics().fillStyle(0x0000ff).fillRect(50, 80, 0, 10);
+        this.healthBar2 = this.add.graphics().fillStyle(0x00ff00).fillRect(550, 50, 200, 20);
+        this.powerBar2 = this.add.graphics().fillStyle(0x0000ff).fillRect(550, 80, 0, 10);
+
+        // Controls (expanded for 2 players)
+        this.keys1 = this.input.keyboard.addKeys('W,S,A,D,J,K,L'); // Player1
+        this.keys2 = this.input.keyboard.addKeys('UP,DOWN,LEFT,RIGHT,NUMPAD_ZERO,NUMPAD_ONE,NUMPAD_TWO'); // Player2
+
+        // Power-ups
+        this.powerups = this.physics.add.group();
+        this.time.addEvent({ delay: 10000, callback: () => {
+            let powerup = this.powerups.create(Phaser.Math.Between(100, 700), 100, 'powerup');
+            powerup.setVelocityY(50);
+        }, loop: true });
+
+        // Collisions
+        this.physics.add.collider(this.bullets1, this.enemies, this.hitEnemy, null, this);
+        this.physics.add.collider(this.bullets2, this.enemies, this.hitEnemy, null, this);
+        this.physics.add.overlap(this.player1, this.powerups, (p, pu) => this.collectPowerup(p, pu, 1));
+        this.physics.add.overlap(this.player2, this.powerups, (p, pu) => this.collectPowerup(p, pu, 2));
+
+        // Particles
+        this.particles = this.add.particles('explosion');
+        this.emitter = this.particles.createEmitter({ speed: 100, scale: { start: 1, end: 0 }, blendMode: 'ADD' });
+
+        // Sound
+        this.shootSound = this.sound.add('shoot');
+        this.punchSound = this.sound.add('punch');
+
+        // UI
+        this.levelText = this.add.text(400, 20, 'Level 1 - Wave 1', { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
+    }
+
+    update() {
+        // Player1 controls
+        if (this.keys1.A.isDown) this.player1.x -= 5;
+        if (this.keys1.D.isDown) this.player1.x += 5;
+        if (this.keys1.W.isDown && this.player1.body.touching.down) this.player1.setVelocityY(-200);
+        if (Phaser.Input.Keyboard.JustDown(this.keys1.J)) this.shootBullet(this.player1, this.bullets1, 1);
+        if (Phaser.Input.Keyboard.JustDown(this.keys1.K)) this.meleeAttack(this.player1, 1);
+
+        // Player2 controls
+        if (this.keys2.LEFT.isDown) this.player2.x -= 5;
+        if (this.keys2.RIGHT.isDown) this.player2.x += 5;
+        if (this.keys2.UP.isDown && this.player2.body.touching.down) this.player2.setVelocityY(-200);
+        if (Phaser.Input.Keyboard.JustDown(this.keys2.NUMPAD_ZERO)) this.shootBullet(this.player2, this.bullets2, 2);
+        if (Phaser.Input.Keyboard.JustDown(this.keys2.NUMPAD_ONE)) this.meleeAttack(this.player2, 2);
+
+        // Update guns
+        this.gun1.setPosition(this.player1.x + 20, this.player1.y);
+        this.gun2.setPosition(this.player2.x - 20, this.player2.y);
+
+        // Enemy AI
+        this.enemies.children.iterate((enemy) => {
+            if (enemy.x < this.player1.x) enemy.x += 2;
+            else enemy.x -= 2;
+            if (Math.random() < 0.01) this.enemyAttack(enemy);
+        });
+
+        // Win/Lose
+        if (this.health1 <= 0 || this.health2 <= 0) this.gameOver();
+        if (this.enemies.countActive() === 0) this.nextWave();
+    }
+
+    shootBullet(player, bullets, playerNum) {
+        if (!player.hasGun) return;
+        this.shootSound.play();
+        player.play('shoot1');
+        let bullet = bullets.create(player.x, player.y, 'bullet').setScale(2);
+        bullet.setVelocityX(playerNum === 1 ? 300 : -300);
+        bullet.playerNum = playerNum;
+    }
+
+    meleeAttack(player, playerNum) {
+        this.punchSound.play();
+        this.enemies.children.iterate((enemy) => {
+            if (Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 50) {
+                enemy.health -= 20;
+                if (enemy.health <= 0) enemy.destroy();
+            }
+        });
+    }
+
+    hitEnemy(bullet, enemy) {
+        bullet.destroy();
+        enemy.health -= 30;
+        this.emitter.explode(10, enemy.x, enemy.y);
+        if (enemy.health <= 0) enemy.destroy();
+    }
+
+    enemyAttack(enemy) {
+        // Enemy shoots or punches
+        let target = Phaser.Math.RND.pick([this.player1, this.player2]);
+        if (Phaser.Math.Distance.Between(enemy.x, enemy.y, target.x, target.y) < 100) {
+            if (target === this.player1) this.health1 -= 10;
+            else this.health2 -= 10;
+            this.updateBars();
+        }
+    }
+
+    collectPowerup(player, powerup, playerNum) {
+        powerup.destroy();
+        if (playerNum === 1) this.power1 += 20;
+        else this.power2 += 20;
+        this.updateBars();
+    }
+
+    spawnWave() {
+        for (let i = 0; i < this.wave * 2; i++) {
+            let enemy = this.enemies.create(Phaser.Math.Between(100, 700), 100, 'fighter2').setScale(3);
+            enemy.health = 50;
+            enemy.setVelocityY(50);
+        }
+    }
+
+    nextWave() {
+        this.wave++;
+        if (this.wave > 3) this.nextLevel();
+        else {
+            this.spawnWave();
+            this.levelText.setText(`Level ${this.level} - Wave ${this.wave}`);
+        }
+    }
+
+    nextLevel() {
+        this.level++;
+        this.wave = 1;
+        if (this.level > this.maxLevels) {
+            this.add.text(400, 300, 'Victory! Total Time: 10+ Minutes', { fontSize: '48px' }).setOrigin(0.5);
+            this.showFact();
+        } else {
+            this.arena.setTexture('arena2'); // Change arena
+            this.spawnWave();
+            this.levelText.setText(`Level ${this.level} - Wave 1`);
+            this.timer.reset({ delay: 150000, callback: this.nextLevel, callbackScope: this });
+        }
+    }
+
+    gameOver() {
+        this.add.text(400, 300, 'Game Over!', { fontSize: '48px', fill: '#ff0000' }).setOrigin(0.5);
+    }
+
+    updateBars() {
+        this.healthBar1.clear().fillStyle(this.health1 > 50 ? 0x00ff00 : 0xffff00).fillRect(50, 50, this.health1 * 2, 20);
+        this.powerBar1.clear().fillStyle(0x0000ff).fillRect(50, 80, this.power1 * 2, 10);
+        this.healthBar2.clear().fillStyle(this.health2 > 50 ? 0x00ff00 : 0xffff00).fillRect(550, 50, this.health2 * 2, 20);
+        this.powerBar2.clear().fillStyle(0x0000ff).fillRect(550, 80, this.power2 * 2, 10);
+    }
+
+    showFact() {
+        const facts = [
+            \"Projectile motion: Guns follow parabolic paths due to gravity!\",
+            \"Fighting physics: Momentum in punches = mass x velocity.\",
+            \"History: Ancient warriors used ranged weapons like bows.\"
+        ];
+        this.add.text(400, 350, Phaser.Utils.Array.GetRandom(facts), { fontSize: '24px' }).setOrigin(0.5);
+    }
+}
+
+const config = {
+    type: Phaser.AUTO,
+    parent: 'gameContainer',
+    width: 800,
+    height: 600,
+    physics: { default: 'arcade', arcade: { gravity: { y: 300 } } },
+    scene: QuantumClash
+};
+
+new Phaser.Game(config);
+  </script>
+  <div style="text-align:center;margin:24px 0;">
+    <a href="https://phaser.io/" target="_blank" style="color:#99f;">Made with Phaser.js</a>
+  </div>
+</body>
+</html>
+
