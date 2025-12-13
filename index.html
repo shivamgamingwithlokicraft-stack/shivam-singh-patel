@@ -7,83 +7,247 @@
   <!-- Phaser CDN -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
   <style>
-    body { background: linear-gradient(180deg, #000011 0%, #001122 100%); color: #fff; margin: 0; font-family: 'Arial', sans-serif; overflow-x: hidden; }
-    #header { background: #222; padding: 10px; text-align: center; box-shadow: 0 2px 10px #00ffff; }
-    #loginForm { display: inline-block; margin-top: 10px; }
-    #loginForm input { padding: 5px; margin: 5px; border: 1px solid #00ffff; background: #000; color: #fff; }
-    #loginForm button { padding: 5px 10px; background: #00ffff; border: none; color: #000; cursor: pointer; }
-    #gameContainer { margin: 20px auto; width: 800px; height: 600px; background: #000; box-shadow: 0 0 20px #00ffff; border: 2px solid #00ffff; }
-    h1 { margin: 0; color: #00ffff; text-shadow: 0 0 10px #00ffff; }
-    .credit { margin: 5px 0; color: #aaa; }
-    #footer { background: #222; padding: 20px; text-align: center; margin-top: 20px; border-top: 2px solid #00ffff; }
-    #footer a { color: #00ffff; text-decoration: none; margin: 0 10px; }
-    #footer .section { margin: 10px 0; text-align: left; max-width: 800px; margin: 10px auto; }
-    .sticker { position: absolute; width: 50px; height: 50px; background: url('https://opengameart.org/sites/default/files/sticker_0.png') no-repeat; opacity: 0.7; }
-    #termsModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; }
-    #termsModal .content { background: #222; margin: 5% auto; padding: 20px; width: 90%; max-width: 800px; border: 2px solid #00ffff; max-height: 80%; overflow-y: auto; }
-    #termsModal .close { float: right; cursor: pointer; color: #ff0000; font-size: 24px; }
+    body { 
+      background: #ffffff; 
+      color: #333; 
+      margin: 0; 
+      font-family: 'Times New Roman', serif; 
+      overflow-x: hidden; 
+      line-height: 1.6;
+    }
+    #header { 
+      background: #0072cf; /* Cambridge blue, adapted for gaming with a sci-fi tint */
+      padding: 10px 20px; 
+      text-align: center; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #header h1 { 
+      margin: 0; 
+      color: #ffffff; 
+      font-size: 24px;
+      text-shadow: 0 0 5px #00ffff; /* Gaming accent */
+    }
+    #loginForm { 
+      display: flex; 
+      align-items: center;
+    }
+    #loginForm input { 
+      padding: 5px; 
+      margin: 0 5px; 
+      border: 1px solid #ccc; 
+      background: #fff; 
+      color: #333; 
+    }
+    #loginForm button { 
+      padding: 5px 10px; 
+      background: #ffffff; 
+      border: 1px solid #0072cf; 
+      color: #0072cf; 
+      cursor: pointer; 
+      transition: background 0.3s;
+    }
+    #loginForm button:hover { 
+      background: #00ffff; /* Gaming hover effect */
+      color: #000;
+    }
+    #gameContainer { 
+      margin: 20px auto; 
+      width: 800px; 
+      height: 600px; 
+      background: url('https://opengameart.org/sites/default/files/sci_fi_floor.png') no-repeat center center; /* Gaming background image */
+      background-size: cover;
+      box-shadow: 0 0 20px #00ffff; 
+      border: 2px solid #00ffff; 
+    }
+    .credit { 
+      margin: 5px 0; 
+      color: #ffffff; 
+      font-size: 14px;
+    }
+    #footer { 
+      background: #f8f8f8; 
+      padding: 20px; 
+      text-align: center; 
+      margin-top: 20px; 
+      border-top: 1px solid #ddd; 
+      color: #666;
+    }
+    #footer a { 
+      color: #0072cf; 
+      text-decoration: none; 
+      margin: 0 10px; 
+      transition: color 0.3s;
+    }
+    #footer a:hover { 
+      color: #00ffff; /* Gaming hover */
+    }
+    #footer .section { 
+      margin: 10px 0; 
+      text-align: left; 
+      max-width: 800px; 
+      margin: 10px auto; 
+    }
+    .sticker { 
+      position: absolute; 
+      width: 50px; 
+      height: 50px; 
+      background: url('https://opengameart.org/sites/default/files/sticker_0.png') no-repeat; 
+      opacity: 0.7; 
+    }
+    #termsModal, #faqModal, #privacyModal { 
+      display: none; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.8); 
+      z-index: 1000; 
+      overflow-y: auto; 
+    }
+    #termsModal .content, #faqModal .content, #privacyModal .content { 
+      background: #fff; 
+      margin: 5% auto; 
+      padding: 20px; 
+      width: 90%; 
+      max-width: 800px; 
+      border: 1px solid #ddd; 
+      max-height: 80%; 
+      overflow-y: auto; 
+    }
+    #termsModal .close, #faqModal .close, #privacyModal .close { 
+      float: right; 
+      cursor: pointer; 
+      color: #ff0000; 
+      font-size: 24px; 
+    }
+    /* Additional styles to mimic cam.ac.uk layout with gaming theme */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+    }
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+      margin: 0 15px;
+    }
+    main {
+      padding: 20px 0;
+    }
+    /* Gaming theme colors: blues and cyans for accents */
+    h3 {
+      color: #0072cf;
+      border-bottom: 2px solid #00ffff;
+      padding-bottom: 5px;
+    }
   </style>
 </head>
 <body>
-  <div id="header">
-    <h1>QuantumClash: Gun & Melee Edition</h1>
-    <div class="credit">by SHIVAM SINGH PATEL-stack &bull; <a href="https://phaser.io/" target="_blank">Phaser.js</a></div>
-    <div id="loginForm">
-      <input type="text" id="username" placeholder="Username">
-      <input type="password" id="password" placeholder="Password">
-      <button onclick="login()">Login</button>
-      <button onclick="signup()">Sign Up</button>
-      <span id="userStatus">Not logged in</span>
+  <header id="header">
+    <div class="container">
+      <nav>
+        <div>
+          <h1>QuantumClash: Gun & Melee Edition</h1>
+          <div class="credit">by SHIVAM SINGH PATEL-stack &bull; <a href="https://phaser.io/" target="_blank">Phaser.js</a></div>
+        </div>
+        <div id="loginForm">
+          <input type="text" id="username" placeholder="Username">
+          <input type="password" id="password" placeholder="Password">
+          <button onclick="login()">Login</button>
+          <button onclick="signup()">Sign Up</button>
+          <span id="userStatus">Not logged in</span>
+        </div>
+      </nav>
     </div>
-  </div>
-  <div id="gameContainer"></div>
-  <div class="sticker" style="top: 200px; left: 100px;"></div>
-  <div class="sticker" style="top: 400px; right: 100px;"></div>
-  <div id="footer">
-    <div class="section">
-      <h3>About QuantumClash</h3>
-      <p>QuantumClash is a thrilling 2-player local multiplayer sci-fi shooter where you battle waves of enemies in dynamic arenas. Use guns, melee attacks, and quantum abilities like dashes and shields to survive. Collect power-ups, destroy obstacles, and climb through 5 levels of increasing difficulty. Features realistic physics, varied enemy types (basic, runners, shooters, bosses), scoring, and immersive effects. Total playtime: 10+ minutes per session!</p>
-      <p><strong>Story:</strong> In a futuristic world, two heroes must defend quantum portals from alien invaders. Team up or compete in epic clashes!</p>
-      <p><strong>Features:</strong> 2-player co-op/competitive, destructible environments, special abilities, particle effects, sound, and more.</p>
+  </header>
+  <main class="container">
+    <div id="gameContainer"></div>
+    <div class="sticker" style="top: 200px; left: 100px;"></div>
+    <div class="sticker" style="top: 400px; right: 100px;"></div>
+  </main>
+  <footer id="footer">
+    <div class="container">
+      <div class="section">
+        <h3>About QuantumClash</h3>
+        <p>QuantumClash is a thrilling 2-player local multiplayer sci-fi shooter where you battle waves of enemies in dynamic arenas. Use guns, melee attacks, and quantum abilities like dashes and shields to survive. Collect power-ups, destroy obstacles, and climb through 5 levels of increasing difficulty. Features realistic physics, varied enemy types (basic, runners, shooters, bosses), scoring, and immersive effects. Total playtime: 10+ minutes per session!</p>
+        <p><strong>Story:</strong> In a futuristic world, two heroes must defend quantum portals from alien invaders. Team up or compete in epic clashes!</p>
+        <p><strong>Features:</strong> 2-player co-op/competitive, destructible environments, special abilities, particle effects, sound, and more.</p>
+      </div>
+      <div class="section">
+        <h3>How to Play</h3>
+        <p><strong>Controls:</strong></p>
+        <ul>
+          <li>Player 1: W/A/S/D (move/jump), J (shoot), K (melee), L (dash)</li>
+          <li>Player 2: Arrow keys (move/jump), NumPad 0 (shoot), NumPad 1 (melee), NumPad 2 (shield)</li>
+          <li>Press P to pause. Collect power-ups for abilities.</li>
+        </ul>
+        <p><strong>Tips:</strong> Use cover, coordinate attacks, and manage health/power bars.</p>
+      </div>
+      <div class="section">
+        <h3>Contact Us</h3>
+        <p>Email: your.email@example.com | Phone: +1-123-456-7890 | Developer: Shivam Singh Patel</p>
+        <p>Address: 123 Quantum Street, Tech City, USA</p>
+      </div>
+      <div class="section">
+        <a href="#" onclick="showTerms()">Terms & Conditions</a> | <a href="#" onclick="showFAQ()">FAQ</a> | <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+      </div>
+      <div class="section">
+        <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">Discord</a></p>
+      </div>
+      <div class="section">
+        <p>&copy; 2023 QuantumClash. All rights reserved.</p>
+      </div>
     </div>
-    <div class="section">
-      <h3>How to Play</h3>
-      <p><strong>Controls:</strong></p>
-      <ul>
-        <li>Player 1: W/A/S/D (move/jump), J (shoot), K (melee), L (dash)</li>
-        <li>Player 2: Arrow keys (move/jump), NumPad 0 (shoot), NumPad 1 (melee), NumPad 2 (shield)</li>
-        <li>Press P to pause. Collect power-ups for abilities.</li>
-      </ul>
-      <p><strong>Tips:</strong> Use cover, coordinate attacks, and manage health/power bars.</p>
-    </div>
-    <div class="section">
-      <h3>Contact Us</h3>
-      <p>Email: your.email@example.com | Phone: +1-123-456-7890 | Developer: Shivam Singh Patel</p>
-      <p>Address: 123 Quantum Street, Tech City, USA</p>
-    </div>
-    <div class="section">
-      <a href="#" onclick="showTerms()">Terms & Conditions</a> | <a href="#">Privacy Policy</a> | <a href="#">FAQ</a>
-    </div>
-    <div class="section">
-      <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">Discord</a></p>
-    </div>
-    <div class="section">
-      <p>&copy; 2023 QuantumClash. All rights reserved.</p>
-    </div>
-  </div>
+  </footer>
   <div id="termsModal">
     <div class="content">
       <span class="close" onclick="hideTerms()">&times;</span>
       <h2>Terms & Conditions</h2>
       <p><strong>1. Acceptance of Terms</strong><br>By accessing and using QuantumClash, you accept and agree to be bound by the terms and provision of this agreement.</p>
-      <p><strong>2. Use License</strong><br>Permission is granted to temporarily download one copy of QuantumClash for personal, non-commercial transitory viewing only.</p>
+      <p><strong>2. Use License</strong><br>Permission is granted to temporarily download one copy of QuantumClash for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not: modify or copy the materials; use the materials for any commercial purpose or for any public display (commercial or non-commercial); attempt to decompile or reverse engineer any software contained on QuantumClash; remove any copyright or other proprietary notations from the materials.</p>
       <p><strong>3. Disclaimer</strong><br>The materials on QuantumClash are provided on an 'as is' basis. QuantumClash makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
-      <p><strong>4. Limitations</strong><br>In no event shall QuantumClash or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use QuantumClash.</p>
-      <p><strong>5. Accuracy of Materials</strong><br>The materials appearing on QuantumClash could include technical, typographical, or photographic errors. QuantumClash does not warrant that any of the materials on its website are accurate, complete, or current.</p>
-      <p><strong>6. Links</strong><br>QuantumClash has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site.</p>
+      <p><strong>4. Limitations</strong><br>In no event shall QuantumClash or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use QuantumClash, even if QuantumClash or a QuantumClash authorized representative has been notified orally or in writing of the possibility of such damage. Because some jurisdictions do not allow limitations on implied warranties, or limitations of liability for consequential or incidental damages, these limitations may not apply to you.</p>
+      <p><strong>5. Accuracy of Materials</strong><br>The materials appearing on QuantumClash could include technical, typographical, or photographic errors. QuantumClash does not warrant that any of the materials on its website are accurate, complete, or current. QuantumClash may make changes to the materials contained on its website at any time without notice. However QuantumClash does not make any commitment to update the materials.</p>
+      <p><strong>6. Links</strong><br>QuantumClash has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by QuantumClash of the site. Use of any such linked website is at the user's own risk.</p>
       <p><strong>7. Modifications</strong><br>QuantumClash may revise these terms of service for its website at any time without notice. By using this website you are agreeing to be bound by the then current version of these terms of service.</p>
       <p><strong>8. Governing Law</strong><br>These terms and conditions are governed by and construed in accordance with the laws of USA, and you irrevocably submit to the exclusive jurisdiction of the courts in that state or location.</p>
       <p>If you have any questions about these Terms & Conditions, please contact us.</p>
+    </div>
+  </div>
+  <div id="faqModal">
+    <div class="content">
+      <span class="close" onclick="hideFAQ()">&times;</span>
+      <h2>Frequently Asked Questions (FAQ)</h2>
+      <p><strong>Q: What is QuantumClash?</strong><br>A: QuantumClash is a 2-player local multiplayer game where players battle enemies in sci-fi arenas using guns, melee, and special abilities.</p>
+      <p><strong>Q: How do I start playing?</strong><br>A: Sign up or log in, then press SPACE in the game to begin. Controls are listed in the "How to Play" section.</p>
+      <p><strong>Q: Is the game free?</strong><br>A: Yes, it's free to play in your browser.</p>
+      <p><strong>Q: Can I play solo?</strong><br>A: No, it's designed for 2 players locally.</p>
+      <p><strong>Q: What are the system requirements?</strong><br>A: A modern browser with JavaScript enabled, and Phaser.js support.</p>
+      <p><strong>Q: How do I report bugs?</strong><br>A: Contact us via email or social media.</p>
+      <p><strong>Q: Is my data safe?</strong><br>A: We use local storage for login; no personal data is shared externally.</p>
+      <p>If you have more questions, feel free to reach out!</p>
+    </div>
+  </div>
+  <div id="privacyModal">
+    <div class="content">
+      <span class="close" onclick="hidePrivacy()">&times;</span>
+      <h2>Privacy Policy</h2>
+      <p><strong>1. Information We Collect</strong><br>We collect information you provide directly to us, such as when you create an account or contact us. This may include your username and password, stored locally on your device.</p>
+      <p><strong>2. How We Use Your Information</strong><br>We use the information to provide, maintain, and improve QuantumClash, including enabling login functionality and game access.</p>
+      <p><strong>3. Sharing of Information</strong><br>We do not share your personal information with third parties except as required by law.</p>
+      <p><strong>4. Data Security</strong><br>We take reasonable measures to protect your information, but no method of transmission over the internet is 100% secure.</p>
+      <p><strong>5. Changes to This Policy</strong><br>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page.</p>
+      <p><strong>6. Contact Us</strong><br>If you have any questions about this Privacy Policy, please contact us.</p>
     </div>
   </div>
   <script>
@@ -98,12 +262,11 @@
         return;
       }
       const storedPass = localStorage.getItem(user);
-      if (storedPass === pass) {
+      if (storedPass && storedPass === pass) {
         loggedInUser = user;
         localStorage.setItem('user', user);
         document.getElementById('userStatus').textContent = `Logged in as ${user}`;
         alert('Login successful! Game unlocked.');
-        // Restart game if needed
         if (window.game) window.game.destroy();
         window.game = new Phaser.Game(config);
       } else {
@@ -134,6 +297,22 @@
       document.getElementById('termsModal').style.display = 'none';
     }
 
+    function showFAQ() {
+      document.getElementById('faqModal').style.display = 'block';
+    }
+
+    function hideFAQ() {
+      document.getElementById('faqModal').style.display = 'none';
+    }
+
+    function showPrivacy() {
+      document.getElementById('privacyModal').style.display = 'block';
+    }
+
+    function hidePrivacy() {
+      document.getElementById('privacyModal').style.display = 'none';
+    }
+
     const config = {
       type: Phaser.AUTO,
       parent: 'gameContainer',
@@ -152,74 +331,5 @@
         this.load.spritesheet('enemy_basic', 'https://opengameart.org/sites/default/files/enemies_basic.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('enemy_runner', 'https://opengameart.org/sites/default/files/enemies_runner.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('enemy_shooter', 'https://opengameart.org/sites/default/files/enemies_shooter.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('boss', 'https://opengameart.org/sites/default/files/boss_enemy.png', { frameWidth: 128, frameHeight: 128 });
-        this.load.image('bullet', 'https://opengameart.org/sites/default/files/energy_bolt.png');
-        this.load.image('gun', 'https://opengameart.org/sites/default/files/plasma_gun.png');
-        this.load.image('arena1', 'https://opengameart.org/sites/default/files/sci_fi_floor.png');
-        this.load.image('arena2', 'https://opengameart.org/sites/default/files/ice_floor.png');
-        this.load.image('arena3', 'https://opengameart.org/sites/default/files/desert_floor.png');
-        this.load.image('powerup', 'https://opengameart.org/sites/default/files/power_orb.png');
-        this.load.image('healthpack', 'https://opengameart.org/sites/default/files/health_orb.png');
-        this.load.image('explosion', 'https://opengameart.org/sites/default/files/explosion_anim.png');
-        this.load.image('shield', 'https://opengameart.org/sites/default/files/shield_effect.png');
-        this.load.image('crate', 'https://opengameart.org/sites/default/files/metal_box.png');
-        this.load.image('title', 'https://opengameart.org/sites/default/files/title_card.png');
-        this.load.image('icon_dash', 'https://opengameart.org/sites/default/files/dash_icon.png');
-        this.load.image('icon_shield', 'https://opengameart.org/sites/default/files/shield_icon.png');
-        this.load.audio('shoot', 'https://cdn.pixabay.com/download/audio/2022/07/26/audio_124bfa1f28.mp3?filename=laser_shoot.mp3');
-        this.load.audio('punch', 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9e2b3c.mp3?filename=punch.mp3');
-        this.load.audio('bgm', 'https://cdn.pixabay.com/download/audio/2022/08/01/audio_123456.mp3?filename=bg_music.mp3');
-        this.load.audio('explosion_sound', 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_987654.mp3?filename=explosion.mp3');
-      }
-
-      create() {
-        if (!loggedInUser) {
-          this.add.text(400, 300, 'Please login to play!', { fontSize: '32px', fill: '#ff0000' }).setOrigin(0.5);
-          return;
-        }
-
-        this.bgm = this.sound.add('bgm', { loop: true, volume: 0.5 });
-        this.bgm.play();
-
-        this.titleImage = this.add.image(400, 300, 'title').setScale(1.5);
-        this.startText = this.add.text(400, 500, 'Press SPACE to Start', { fontSize: '24px', fill: '#00ff00' }).setOrigin(0.5);
-        this.input.keyboard.on('keydown-SPACE', () => {
-          this.titleImage.destroy();
-          this.startText.destroy();
-          this.startGame();
-        });
-      }
-
-      startGame() {
-        this.level = 1;
-        this.wave = 1;
-        this.maxLevels = 5;
-        this.timer = this.time.addEvent({ delay: 150000, callback: this.nextLevel, callbackScope: this });
-
-        this.arena = this.add.image(400, 300, 'arena1').setScale(2.5);
-        this.stars = this.add.particles('powerup').createEmitter({ x: { min: 0, max: 800 }, y: 0, speedY: 50, scale: 0.1, alpha: 0.5, lifespan: 10000 });
-
-        this.playerSkins = ['fighter1', 'fighter2'];
-        this.player1Skin = this.playerSkins[0];
-        this.player2Skin = this.playerSkins[1];
-        this.player1 = this.physics.add.sprite(200, 400, this.player1Skin).setCollideWorldBounds(true).setScale(1.5).setTint(0x00ffff);
-        this.player2 = this.physics.add.sprite(600, 400, this.player2Skin).setCollideWorldBounds(true).setScale(1.5).setTint(0xff00ff);
-        this.player1.hasGun = true;
-        this.player2.hasGun = true;
-
-        ['fighter1', 'fighter2'].forEach(skin => {
-          this.anims.create({ key: `idle_${skin}`, frames: this.anims.generateFrameNumbers(skin, { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
-          this.anims.create({ key: `run_${skin}`, frames: this.anims.generateFrameNumbers(skin, { start: 4, end: 11 }), frameRate: 12, repeat: -1 });
-          this.anims.create({ key: `jump_${skin}`, frames: this.anims.generateFrameNumbers(skin, { start: 12, end: 15 }), frameRate: 8 });
-          this.anims.create({ key: `hurt_${skin}`, frames: this.anims.generateFrameNumbers(skin, { start: 16, end: 17 }), frameRate: 10 });
-        });
-        this.player1.play(`idle_${this.player1Skin}`);
-        this.player2.play(`idle_${this.player2Skin}`);
-
-        this.bullets1 = this.physics.add.group();
-        this.bullets2 = this.physics.add.group();
-        this.gun1 = this.add.image(this.player1.x + 30, this.player1.y, 'gun').setScale(1.2).setDepth(2);
-        this.gun2 = this.add.image(this.player2.x - 30, this.player2.y, 'gun').setScale(1.2).setDepth(2);
-
-        this.en
+        this.load.spritesheet('boss', 'https://opengameart.org/sites/default/files/boss
 
