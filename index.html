@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>QuantumClash 3D</title>
+<title>QuantumClash 3D – Debug</title>
 
 <style>
 body {
@@ -12,7 +12,7 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Canvas must be behind UI */
+/* Canvas behind UI */
 canvas {
   position: fixed;
   top: 0;
@@ -45,10 +45,9 @@ header {
 }
 </style>
 </head>
-
 <body>
 
-<header>QuantumClash 3D</header>
+<header>QuantumClash 3D – Debug</header>
 
 <div id="ui">
   <div id="score">Score: 0</div>
@@ -57,18 +56,18 @@ header {
 </div>
 
 <script type="module">
-// ✅ IMPORTS USING CDN
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/loaders/GLTFLoader.js";
 
-/* ===== SCENE SETUP ===== */
+/* ===== Scene ===== */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
 
+/* ===== Camera ===== */
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 camera.position.set(0, 12, 22);
 
+/* ===== Renderer ===== */
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.domElement.style.position = "fixed";
@@ -77,18 +76,13 @@ renderer.domElement.style.left = "0";
 renderer.domElement.style.zIndex = "1";
 document.body.appendChild(renderer.domElement);
 
-/* ===== CONTROLS ===== */
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableRotate = false;
-controls.enablePan = false;
+/* ===== Light ===== */
+const light = new THREE.DirectionalLight(0xffffff, 1.2);
+light.position.set(10,20,10);
+scene.add(light);
+scene.add(new THREE.AmbientLight(0xffffff, 0.8));
 
-/* ===== LIGHTS ===== */
-scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-dirLight.position.set(10,20,10);
-scene.add(dirLight);
-
-/* ===== FLOOR ===== */
+/* ===== Floor ===== */
 const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(60,60),
   new THREE.MeshStandardMaterial({ color:0x222222 })
@@ -96,7 +90,7 @@ const floor = new THREE.Mesh(
 floor.rotation.x = -Math.PI/2;
 scene.add(floor);
 
-/* ===== VARIABLES ===== */
+/* ===== Variables ===== */
 const loader = new GLTFLoader();
 let player1, player2;
 let score = 0;
@@ -104,22 +98,24 @@ let p1Health = 100;
 let p2Health = 100;
 const keys = {};
 
-/* ===== LOAD PLAYERS ===== */
+/* ===== Load Players ===== */
 loader.load("https://models.babylonjs.com/CesiumMan.glb", gltf=>{
-  player1 = gltf.scene;
-  player1.scale.set(2,2,2);
-  player1.position.set(-5,0,0);
-  scene.add(player1);
-});
+    player1 = gltf.scene;
+    player1.scale.set(2,2,2);
+    player1.position.set(-5,0,0);
+    scene.add(player1);
+    console.log("Player1 loaded!");
+}, undefined, err=>{ console.error("Player1 load error:", err); });
 
 loader.load("https://models.babylonjs.com/CesiumMan.glb", gltf=>{
-  player2 = gltf.scene;
-  player2.scale.set(2,2,2);
-  player2.position.set(5,0,0);
-  scene.add(player2);
-});
+    player2 = gltf.scene;
+    player2.scale.set(2,2,2);
+    player2.position.set(5,0,0);
+    scene.add(player2);
+    console.log("Player2 loaded!");
+}, undefined, err=>{ console.error("Player2 load error:", err); });
 
-/* ===== INPUT ===== */
+/* ===== Input ===== */
 document.addEventListener("keydown", e=>{ keys[e.key.toLowerCase()]=true; });
 document.addEventListener("keyup", e=>{ keys[e.key.toLowerCase()]=false; });
 
@@ -129,43 +125,44 @@ const p1El = document.getElementById("p1");
 const p2El = document.getElementById("p2");
 
 function updateUI(){
-  scoreEl.textContent = "Score: "+score;
-  p1El.textContent = "Player1 Health: "+p1Health;
-  p2El.textContent = "Player2 Health: "+p2Health;
+    scoreEl.textContent = "Score: "+score;
+    p1El.textContent = "Player1 Health: "+p1Health;
+    p2El.textContent = "Player2 Health: "+p2Health;
 }
 
-/* ===== GAME LOOP ===== */
+/* ===== Animate ===== */
 function animate(){
-  requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
 
-  if(player1){
-    if(keys["w"]) player1.position.z -= 0.2;
-    if(keys["s"]) player1.position.z += 0.2;
-    if(keys["a"]) player1.position.x -= 0.2;
-    if(keys["d"]) player1.position.x += 0.2;
-  }
+    if(player1){
+        if(keys["w"]) player1.position.z -= 0.2;
+        if(keys["s"]) player1.position.z += 0.2;
+        if(keys["a"]) player1.position.x -= 0.2;
+        if(keys["d"]) player1.position.x += 0.2;
+    }
 
-  if(player2){
-    if(keys["arrowup"]) player2.position.z -= 0.2;
-    if(keys["arrowdown"]) player2.position.z += 0.2;
-    if(keys["arrowleft"]) player2.position.x -= 0.2;
-    if(keys["arrowright"]) player2.position.x += 0.2;
-  }
+    if(player2){
+        if(keys["arrowup"]) player2.position.z -= 0.2;
+        if(keys["arrowdown"]) player2.position.z += 0.2;
+        if(keys["arrowleft"]) player2.position.x -= 0.2;
+        if(keys["arrowright"]) player2.position.x += 0.2;
+    }
 
-  updateUI();
-  renderer.render(scene,camera);
+    updateUI();
+    renderer.render(scene,camera);
 }
 animate();
 
-/* ===== RESIZE ===== */
+/* ===== Resize ===== */
 window.addEventListener("resize", ()=>{
-  camera.aspect = window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 });
 </script>
 
 </body>
 </html>
+
 
 
