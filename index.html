@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>QuantumClash 3D</title>
 
 <style>
@@ -16,10 +16,10 @@ header {
   top: 0;
   width: 100%;
   padding: 12px;
-  text-align: center;
   background: #00ffff;
   color: #111;
   font-weight: bold;
+  text-align: center;
   z-index: 10;
 }
 #ui {
@@ -34,6 +34,7 @@ header {
 </head>
 
 <body>
+
 <header>QuantumClash 3D</header>
 
 <div id="ui">
@@ -42,13 +43,12 @@ header {
   <div id="p2">Player2 Health: 100</div>
 </div>
 
-<!-- ✅ THREE.JS MODULE -->
 <script type="module">
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/loaders/GLTFLoader.js";
 
-/* ================= SCENE ================= */
+/* ===== SCENE ===== */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
 
@@ -64,18 +64,18 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-/* ================= CONTROLS ================= */
+/* ===== CONTROLS ===== */
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableRotate = false;
 controls.enablePan = false;
 
-/* ================= LIGHTS ================= */
+/* ===== LIGHTS ===== */
 scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-dirLight.position.set(10, 20, 10);
-scene.add(dirLight);
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(10, 20, 10);
+scene.add(light);
 
-/* ================= FLOOR ================= */
+/* ===== FLOOR ===== */
 const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(60, 60),
   new THREE.MeshStandardMaterial({ color: 0x222222 })
@@ -83,7 +83,7 @@ const floor = new THREE.Mesh(
 floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
 
-/* ================= VARIABLES ================= */
+/* ===== VARIABLES ===== */
 const loader = new GLTFLoader();
 let player1, player2;
 let score = 0;
@@ -91,36 +91,30 @@ let p1Health = 100;
 let p2Health = 100;
 const keys = {};
 
-/* ================= LOAD PLAYER MODELS ================= */
-loader.load(
-  "https://models.babylonjs.com/CesiumMan.glb",
-  (gltf) => {
-    player1 = gltf.scene;
-    player1.scale.set(2, 2, 2);
-    player1.position.set(-5, 0, 0);
-    scene.add(player1);
-  }
-);
+/* ===== LOAD PLAYERS ===== */
+loader.load("https://models.babylonjs.com/CesiumMan.glb", gltf => {
+  player1 = gltf.scene;
+  player1.scale.set(2,2,2);
+  player1.position.set(-5,0,0);
+  scene.add(player1);
+});
 
-loader.load(
-  "https://models.babylonjs.com/CesiumMan.glb",
-  (gltf) => {
-    player2 = gltf.scene;
-    player2.scale.set(2, 2, 2);
-    player2.position.set(5, 0, 0);
-    scene.add(player2);
-  }
-);
+loader.load("https://models.babylonjs.com/CesiumMan.glb", gltf => {
+  player2 = gltf.scene;
+  player2.scale.set(2,2,2);
+  player2.position.set(5,0,0);
+  scene.add(player2);
+});
 
-/* ================= INPUT ================= */
-document.addEventListener("keydown", (e) => {
+/* ===== INPUT ===== */
+document.addEventListener("keydown", e => {
   keys[e.key.toLowerCase()] = true;
 });
-document.addEventListener("keyup", (e) => {
+document.addEventListener("keyup", e => {
   keys[e.key.toLowerCase()] = false;
 });
 
-/* ================= UI ================= */
+/* ===== UI ===== */
 const scoreEl = document.getElementById("score");
 const p1El = document.getElementById("p1");
 const p2El = document.getElementById("p2");
@@ -131,7 +125,7 @@ function updateUI() {
   p2El.textContent = "Player2 Health: " + p2Health;
 }
 
-/* ================= GAME LOOP ================= */
+/* ===== GAME LOOP ===== */
 function animate() {
   requestAnimationFrame(animate);
 
@@ -155,12 +149,14 @@ function animate() {
 
 animate();
 
-/* ================= RESIZE ================= */
+/* ===== RESIZE ===== */
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 </script>
+
 </body>
 </html>
+
