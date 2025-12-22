@@ -1,257 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>QuantumClash 3D Full Game</title>
+<meta charset="UTF-8" />
+<title>QuantumClash 3D</title>
+
 <style>
-body { margin:0; overflow:hidden; font-family:Arial; background:#111; color:#eee; }
-header { background:#0ff; color:#111; padding:15px; text-align:center; font-size:24px; font-weight:bold;}
-#ui { position:absolute; top:10px; left:10px; font-size:20px; }
-#ui div { margin-bottom:5px; }
-button { position:absolute; top:10px; right:10px; padding:10px 15px; background-color:#0ff; border:none; color:#111; cursor:pointer; font-weight:bold;}
-#termsModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); color:#0ff; overflow:auto; padding:50px;}
-#termsModal .close { float:right; font-size:30px; cursor:pointer; color:#f00; }
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #111;
+  font-family: Arial, sans-serif;
+}
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  background: #00ffff;
+  color: #111;
+  font-weight: bold;
+  z-index: 10;
+}
+#ui {
+  position: fixed;
+  top: 60px;
+  left: 10px;
+  color: #00ffff;
+  z-index: 10;
+}
+#ui div { margin-bottom: 6px; }
 </style>
 </head>
-<body>
 
-<header>QuantumClash 3D Full Game</header>
+<body>
+<header>QuantumClash 3D</header>
 
 <div id="ui">
   <div id="score">Score: 0</div>
-  <div id="player1Health">Player1 Health: 100</div>
-  <div id="player2Health">Player2 Health: 100</div>
-  <div id="bossHealth">Boss Health: 200</div>
+  <div id="p1">Player1 Health: 100</div>
+  <div id="p2">Player2 Health: 100</div>
 </div>
 
-<button onclick="showTerms()">Terms & Conditions</button>
+<!-- ✅ THREE.JS MODULE -->
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js";
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/loaders/GLTFLoader.js";
 
-<div id="termsModal">
-  <span class="close" onclick="hideTerms()">&times;</span>
-  <h2>Terms & Conditions</h2>
-  <p>1. Game is free to play in the browser.</p>
-  <p>2. No personal data is collected.</p>
-  <p>3. Use responsibly and have fun!</p>
-  <p>4. Game provided "as is" without warranty.</p>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.157.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.157.0/examples/js/controls/OrbitControls.js"></script>
-
-<script>
-// ==================== Scene Setup ====================
-let scene = new THREE.Scene();
+/* ================= SCENE ================= */
+const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
 
-let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-camera.position.set(0, 15, 25);
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.set(0, 12, 22);
 
-let renderer = new THREE.WebGLRenderer({antialias:true});
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-let controls = new THREE.OrbitControls(camera, renderer.domElement);
+/* ================= CONTROLS ================= */
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableRotate = false;
 controls.enablePan = false;
-controls.enableZoom = true;
 
-// ==================== Lights ====================
-let light = new THREE.DirectionalLight(0xffffff,1);
-light.position.set(10,20,10);
-scene.add(light);
-scene.add(new THREE.AmbientLight(0x404040,1.5));
+/* ================= LIGHTS ================= */
+scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+dirLight.position.set(10, 20, 10);
+scene.add(dirLight);
 
-// ==================== Floor ====================
-let floorGeo = new THREE.PlaneGeometry(50,50);
-let floorMat = new THREE.MeshStandardMaterial({color:0x222222});
-let floor = new THREE.Mesh(floorGeo,floorMat);
-floor.rotation.x = -Math.PI/2;
+/* ================= FLOOR ================= */
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(60, 60),
+  new THREE.MeshStandardMaterial({ color: 0x222222 })
+);
+floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
 
-// ==================== Load Players ====================
-let loader = new THREE.GLTFLoader();
-let player1, player2, mixer1, mixer2, clock = new THREE.Clock();
+/* ================= VARIABLES ================= */
+const loader = new GLTFLoader();
+let player1, player2;
 let score = 0;
-let player1Health = 100;
-let player2Health = 100;
-let bossHealth = 200;
+let p1Health = 100;
+let p2Health = 100;
+const keys = {};
 
-loader.load('https://models.babylonjs.com/CesiumMan.glb', function(gltf){
+/* ================= LOAD PLAYER MODELS ================= */
+loader.load(
+  "https://models.babylonjs.com/CesiumMan.glb",
+  (gltf) => {
     player1 = gltf.scene;
-    player1.scale.set(2,2,2);
-    player1.position.set(-5,0,0);
+    player1.scale.set(2, 2, 2);
+    player1.position.set(-5, 0, 0);
     scene.add(player1);
-    mixer1 = new THREE.AnimationMixer(player1);
-    gltf.animations.forEach((clip)=>mixer1.clipAction(clip).play());
-});
+  }
+);
 
-loader.load('https://models.babylonjs.com/CesiumMan.glb', function(gltf){
+loader.load(
+  "https://models.babylonjs.com/CesiumMan.glb",
+  (gltf) => {
     player2 = gltf.scene;
-    player2.scale.set(2,2,2);
-    player2.position.set(5,0,0);
+    player2.scale.set(2, 2, 2);
+    player2.position.set(5, 0, 0);
     scene.add(player2);
-    mixer2 = new THREE.AnimationMixer(player2);
-    gltf.animations.forEach((clip)=>mixer2.clipAction(clip).play());
+  }
+);
+
+/* ================= INPUT ================= */
+document.addEventListener("keydown", (e) => {
+  keys[e.key.toLowerCase()] = true;
+});
+document.addEventListener("keyup", (e) => {
+  keys[e.key.toLowerCase()] = false;
 });
 
-// ==================== Boss Enemy ====================
-let boss;
-loader.load('https://models.babylonjs.com/CesiumMan.glb', function(gltf){
-    boss = gltf.scene;
-    boss.scale.set(3,3,3);
-    boss.position.set(0,0,-15);
-    scene.add(boss);
-});
+/* ================= UI ================= */
+const scoreEl = document.getElementById("score");
+const p1El = document.getElementById("p1");
+const p2El = document.getElementById("p2");
 
-// ==================== Enemies ====================
-let enemies = [];
-function spawnEnemy(){
-    loader.load('https://models.babylonjs.com/CesiumMan.glb', function(gltf){
-        let enemy = gltf.scene.clone();
-        enemy.scale.set(1.5,1.5,1.5);
-        enemy.position.set(Math.random()*20-10,0,Math.random()*-20);
-        scene.add(enemy);
-        enemies.push(enemy);
-    });
-}
-setInterval(spawnEnemy, 7000);
-
-// ==================== Bullets ====================
-let bullets = [];
-function shootBullet(player){
-    if(!player) return;
-    let bulletGeo = new THREE.SphereGeometry(0.2,8,8);
-    let bulletMat = new THREE.MeshStandardMaterial({color:0xffff00, emissive:0xffff00});
-    let bullet = new THREE.Mesh(bulletGeo, bulletMat);
-    bullet.position.copy(player.position).add(new THREE.Vector3(0,1,0));
-    bullet.owner = player;
-    scene.add(bullet);
-    bullets.push(bullet);
+function updateUI() {
+  scoreEl.textContent = "Score: " + score;
+  p1El.textContent = "Player1 Health: " + p1Health;
+  p2El.textContent = "Player2 Health: " + p2Health;
 }
 
-// ==================== Shields ====================
-let shields = [];
-function activateShield(player){
-    if(!player) return;
-    let geo = new THREE.SphereGeometry(1.5,16,16);
-    let mat = new THREE.MeshStandardMaterial({color:0x00ffff, transparent:true, opacity:0.4});
-    let shield = new THREE.Mesh(geo, mat);
-    shield.position.copy(player.position);
-    shield.owner = player;
-    scene.add(shield);
-    shields.push(shield);
-    setTimeout(()=>{scene.remove(shield); shields.splice(shields.indexOf(shield),1);},3000);
+/* ================= GAME LOOP ================= */
+function animate() {
+  requestAnimationFrame(animate);
+
+  if (player1) {
+    if (keys["w"]) player1.position.z -= 0.2;
+    if (keys["s"]) player1.position.z += 0.2;
+    if (keys["a"]) player1.position.x -= 0.2;
+    if (keys["d"]) player1.position.x += 0.2;
+  }
+
+  if (player2) {
+    if (keys["arrowup"]) player2.position.z -= 0.2;
+    if (keys["arrowdown"]) player2.position.z += 0.2;
+    if (keys["arrowleft"]) player2.position.x -= 0.2;
+    if (keys["arrowright"]) player2.position.x += 0.2;
+  }
+
+  updateUI();
+  renderer.render(scene, camera);
 }
 
-// ==================== Melee Attacks ====================
-function meleeAttack(player){
-    if(!player) return;
-    let sphere = new THREE.SphereGeometry(2,8,8);
-    let mat = new THREE.MeshStandardMaterial({color:0xff0000, transparent:true, opacity:0.3});
-    let hitZone = new THREE.Mesh(sphere, mat);
-    hitZone.position.copy(player.position);
-    scene.add(hitZone);
-    setTimeout(()=>{scene.remove(hitZone);},200);
-    enemies.forEach((e,i)=>{
-        if(e.position.distanceTo(player.position)<2){
-            scene.remove(e);
-            enemies.splice(i,1);
-            score +=10;
-        }
-    });
-}
-
-// ==================== Controls ====================
-let keys = {};
-document.addEventListener('keydown', e=>keys[e.key.toLowerCase()]=true);
-document.addEventListener('keyup', e=>keys[e.key.toLowerCase()]=false);
-document.addEventListener('keypress', e=>{
-    if(e.key===' ') shootBullet(player1);      // P1 shoot
-    if(e.key==='Enter') shootBullet(player2);  // P2 shoot
-    if(e.key==='q') activateShield(player1);   // P1 shield
-    if(e.key==='e') meleeAttack(player1);      // P1 melee
-    if(e.key==='/') activateShield(player2);   // P2 shield
-    if(e.key==='.'){ meleeAttack(player2); }   // P2 melee
-});
-
-// ==================== UI Update ====================
-function updateUI(){
-    document.getElementById('score').innerText = "Score: "+score;
-    document.getElementById('player1Health').innerText = "Player1 Health: "+player1Health;
-    document.getElementById('player2Health').innerText = "Player2 Health: "+player2Health;
-    document.getElementById('bossHealth').innerText = "Boss Health: "+bossHealth;
-}
-
-// ==================== Animation Loop ====================
-function animate(){
-    requestAnimationFrame(animate);
-    let delta = clock.getDelta();
-    if(mixer1) mixer1.update(delta);
-    if(mixer2) mixer2.update(delta);
-
-    // Player1 WASD
-    if(player1){
-        if(keys['w']) player1.position.z -=0.2;
-        if(keys['s']) player1.position.z +=0.2;
-        if(keys['a']) player1.position.x -=0.2;
-        if(keys['d']) player1.position.x +=0.2;
-    }
-
-    // Player2 Arrow Keys
-    if(player2){
-        if(keys['arrowup']) player2.position.z -=0.2;
-        if(keys['arrowdown']) player2.position.z +=0.2;
-        if(keys['arrowleft']) player2.position.x -=0.2;
-        if(keys['arrowright']) player2.position.x +=0.2;
-    }
-
-    // Bullets movement
-    bullets.forEach((b,i)=>{
-        b.position.z -=0.5;
-        // Collision with enemies
-        enemies.forEach((e,j)=>{
-            if(b.position.distanceTo(e.position)<1){
-                scene.remove(b); scene.remove(e);
-                bullets.splice(i,1); enemies.splice(j,1);
-                score+=10;
-            }
-        });
-        // Collision with boss
-        if(boss && b.position.distanceTo(boss.position)<2){
-            bossHealth-=10; score+=20;
-            scene.remove(b);
-            bullets.splice(i,1);
-            if(bossHealth<=0) scene.remove(boss);
-        }
-    });
-
-    // Enemy AI
-    enemies.forEach(e=>{
-        let target = player1 || player2;
-        if(player2 && Math.random()>0.5) target=player2;
-        if(target){
-            let dir = target.position.clone().sub(e.position).normalize().multiplyScalar(0.01);
-            e.position.add(dir);
-            if(e.position.distanceTo(target.position)<1){
-                if(target===player1) player1Health-=1;
-                else player2Health-=1;
-            }
-        }
-    });
-
-    // Shields follow players
-    shields.forEach(s=>{s.position.copy(s.owner.position);});
-
-    updateUI();
-    renderer.render(scene,camera);
-}
 animate();
 
-// ==================== Terms Modal ====================
-function showTerms(){ document.getElementById('termsModal').style.display='block'; }
-function hideTerms(){ document.getElementById('termsModal').style.display='none'; }
-
+/* ================= RESIZE ================= */
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 </script>
 </body>
 </html>
-
