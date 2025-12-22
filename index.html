@@ -12,7 +12,7 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* 🔥 IMPORTANT FIX */
+/* 🔥 CRITICAL FIX */
 canvas {
   position: fixed;
   top: 0;
@@ -25,10 +25,10 @@ header {
   top: 0;
   width: 100%;
   padding: 12px;
-  text-align: center;
   background: #00ffff;
   color: #111;
   font-weight: bold;
+  text-align: center;
   z-index: 10;
 }
 
@@ -40,7 +40,9 @@ header {
   z-index: 10;
 }
 
-#ui div { margin-bottom: 6px; }
+#ui div {
+  margin-bottom: 6px;
+}
 </style>
 </head>
 
@@ -59,10 +61,11 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.m
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/loaders/GLTFLoader.js";
 
-/* ================= SCENE ================= */
+/* SCENE */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
 
+/* CAMERA */
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -71,29 +74,27 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.set(0, 12, 22);
 
+/* RENDERER */
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-
-/* 🔥 IMPORTANT FIX */
 renderer.domElement.style.position = "fixed";
 renderer.domElement.style.top = "0";
 renderer.domElement.style.left = "0";
 renderer.domElement.style.zIndex = "1";
-
 document.body.appendChild(renderer.domElement);
 
-/* ================= CONTROLS ================= */
+/* CONTROLS */
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableRotate = false;
 controls.enablePan = false;
 
-/* ================= LIGHTS ================= */
+/* LIGHTS */
 scene.add(new THREE.AmbientLight(0xffffff, 1.2));
 const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 dirLight.position.set(10, 20, 10);
 scene.add(dirLight);
 
-/* ================= FLOOR ================= */
+/* FLOOR */
 const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(60, 60),
   new THREE.MeshStandardMaterial({ color: 0x222222 })
@@ -101,7 +102,7 @@ const floor = new THREE.Mesh(
 floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
 
-/* ================= VARIABLES ================= */
+/* VARIABLES */
 const loader = new GLTFLoader();
 let player1, player2;
 let score = 0;
@@ -109,66 +110,66 @@ let p1Health = 100;
 let p2Health = 100;
 const keys = {};
 
-/* ================= LOAD PLAYERS ================= */
-loader.load("https://models.babylonjs.com/CesiumMan.glb", gltf => {
+/* PLAYER 1 */
+loader.load("https://models.babylonjs.com/CesiumMan.glb", (gltf) => {
   player1 = gltf.scene;
-  player1.scale.set(2,2,2);
-  player1.position.set(-5,0,0);
+  player1.scale.set(2, 2, 2);
+  player1.position.set(-5, 0, 0);
   scene.add(player1);
 });
 
-loader.load("https://models.babylonjs.com/CesiumMan.glb", gltf => {
+/* PLAYER 2 */
+loader.load("https://models.babylonjs.com/CesiumMan.glb", (gltf) => {
   player2 = gltf.scene;
-  player2.scale.set(2,2,2);
-  player2.position.set(5,0,0);
+  player2.scale.set(2, 2, 2);
+  player2.position.set(5, 0, 0);
   scene.add(player2);
 });
 
-/* ================= INPUT ================= */
-document.addEventListener("keydown", e => {
+/* INPUT */
+document.addEventListener("keydown", (e) => {
   keys[e.key.toLowerCase()] = true;
 });
-document.addEventListener("keyup", e => {
+document.addEventListener("keyup", (e) => {
   keys[e.key.toLowerCase()] = false;
 });
 
-/* ================= UI ================= */
+/* UI */
 const scoreEl = document.getElementById("score");
 const p1El = document.getElementById("p1");
 const p2El = document.getElementById("p2");
 
-function updateUI(){
+function updateUI() {
   scoreEl.textContent = "Score: " + score;
   p1El.textContent = "Player1 Health: " + p1Health;
   p2El.textContent = "Player2 Health: " + p2Health;
 }
 
-/* ================= GAME LOOP ================= */
-function animate(){
+/* GAME LOOP */
+function animate() {
   requestAnimationFrame(animate);
 
-  if(player1){
-    if(keys["w"]) player1.position.z -= 0.2;
-    if(keys["s"]) player1.position.z += 0.2;
-    if(keys["a"]) player1.position.x -= 0.2;
-    if(keys["d"]) player1.position.x += 0.2;
+  if (player1) {
+    if (keys["w"]) player1.position.z -= 0.2;
+    if (keys["s"]) player1.position.z += 0.2;
+    if (keys["a"]) player1.position.x -= 0.2;
+    if (keys["d"]) player1.position.x += 0.2;
   }
 
-  if(player2){
-    if(keys["arrowup"]) player2.position.z -= 0.2;
-    if(keys["arrowdown"]) player2.position.z += 0.2;
-    if(keys["arrowleft"]) player2.position.x -= 0.2;
-    if(keys["arrowright"]) player2.position.x += 0.2;
+  if (player2) {
+    if (keys["arrowup"]) player2.position.z -= 0.2;
+    if (keys["arrowdown"]) player2.position.z += 0.2;
+    if (keys["arrowleft"]) player2.position.x -= 0.2;
+    if (keys["arrowright"]) player2.position.x += 0.2;
   }
 
   updateUI();
   renderer.render(scene, camera);
 }
-
 animate();
 
-/* ================= RESIZE ================= */
-window.addEventListener("resize", ()=>{
+/* RESIZE */
+window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -177,3 +178,4 @@ window.addEventListener("resize", ()=>{
 
 </body>
 </html>
+
