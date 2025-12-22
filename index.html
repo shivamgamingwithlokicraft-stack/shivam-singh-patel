@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>QuantumClash 3D</title>
+<title>QuantumClash 3D Fixed</title>
 <style>
 body { margin:0; overflow:hidden; background:#111; font-family:Arial,sans-serif; }
 canvas { position:fixed; top:0; left:0; z-index:1; }
@@ -13,7 +13,7 @@ header { position:fixed; top:0; width:100%; padding:12px; background:#0ff; color
 </head>
 <body>
 
-<header>QuantumClash 3D</header>
+<header>QuantumClash 3D Fixed</header>
 
 <div id="ui">
   <div id="score">Score: 0</div>
@@ -31,27 +31,22 @@ import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
 
-/* ===== CAMERA ===== */
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 camera.position.set(0, 15, 25);
 
-/* ===== RENDERER ===== */
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-/* ===== CONTROLS ===== */
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableRotate = false;
 controls.enablePan = false;
 
-/* ===== LIGHTS ===== */
 scene.add(new THREE.AmbientLight(0xffffff, 1.2));
 const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 dirLight.position.set(10,20,10);
 scene.add(dirLight);
 
-/* ===== FLOOR ===== */
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(60,60), new THREE.MeshStandardMaterial({color:0x222222}));
 floor.rotation.x = -Math.PI/2;
 scene.add(floor);
@@ -59,39 +54,43 @@ scene.add(floor);
 /* ===== VARIABLES ===== */
 const loader = new GLTFLoader();
 let player1, player2, boss;
-let score = 0;
-let p1Health = 100;
-let p2Health = 100;
-let bossHealth = 200;
-let bullets = [];
-let enemies = [];
-let shields = [];
+let enemyModel;
+let bullets = [], enemies = [], shields = [];
+let score = 0, p1Health = 100, p2Health = 100, bossHealth = 200;
 const keys = {};
 
-/* ===== LOAD PLAYERS ===== */
-loader.load("https://models.babylonjs.com/CesiumMan.glb", gltf => {
-  player1 = gltf.scene; player1.scale.set(2,2,2); player1.position.set(-5,0,0); scene.add(player1);
-});
-loader.load("https://models.babylonjs.com/CesiumMan.glb", gltf => {
-  player2 = gltf.scene; player2.scale.set(2,2,2); player2.position.set(5,0,0); scene.add(player2);
-});
-
-/* ===== BOSS ===== */
-loader.load("https://models.babylonjs.com/CesiumMan.glb", gltf => {
-  boss = gltf.scene; boss.scale.set(3,3,3); boss.position.set(0,0,-15); scene.add(boss);
-});
-
-/* ===== ENEMY SPAWN ===== */
-function spawnEnemy(){
-  loader.load("https://models.babylonjs.com/CesiumMan.glb", gltf=>{
-    let e = gltf.scene.clone();
-    e.scale.set(1.5,1.5,1.5);
-    e.position.set(Math.random()*20-10,0,Math.random()*-20);
-    scene.add(e);
-    enemies.push(e);
+/* ===== LOAD MODELS LOCALLY ===== */
+function loadModel(url){
+  return new Promise((resolve,reject)=>{
+    loader.load(url, gltf => resolve(gltf.scene), undefined, err=>reject(err));
   });
 }
-setInterval(spawnEnemy, 7000);
+
+Promise.all([
+  loadModel("models/CesiumMan.glb"), // player1
+  loadModel("models/CesiumMan.glb"), // player2
+  loadModel("models/CesiumMan.glb"), // boss
+  loadModel("models/CesiumMan.glb")  // enemy template
+]).then(models=>{
+  [player1, player2, boss, enemyModel] = models;
+  
+  player1.scale.set(2,2,2); player1.position.set(-5,0,0); scene.add(player1);
+  player2.scale.set(2,2,2); player2.position.set(5,0,0); scene.add(player2);
+  boss.scale.set(3,3,3); boss.position.set(0,0,-15); scene.add(boss);
+
+  animate(); // start loop
+}).catch(err=>console.error("Model loading error:", err));
+
+/* ===== SPAWN ENEMY ===== */
+function spawnEnemy(){
+  if(!enemyModel) return;
+  let e = enemyModel.clone();
+  e.scale.set(1.5,1.5,1.5);
+  e.position.set(Math.random()*20-10,0,Math.random()*-20);
+  scene.add(e);
+  enemies.push(e);
+}
+setInterval(spawnEnemy,7000);
 
 /* ===== BULLETS ===== */
 function shootBullet(player){
@@ -111,18 +110,18 @@ function activateShield(player){
   s.owner = player;
   scene.add(s);
   shields.push(s);
-  setTimeout(()=>{ scene.remove(s); shields.splice(shields.indexOf(s),1); },3000);
+  setTimeout(()=>{scene.remove(s); shields.splice(shields.indexOf(s),1);},3000);
 }
 
 /* ===== INPUT ===== */
-document.addEventListener("keydown", e=>keys[e.key.toLowerCase()]=true);
-document.addEventListener("keyup", e=>keys[e.key.toLowerCase()]=false);
-document.addEventListener("keypress", e=>{
+document.addEventListener("keydown", e=>{
+  keys[e.key.toLowerCase()] = true;
   if(e.key===' ') shootBullet(player1);
   if(e.key==='Enter') shootBullet(player2);
   if(e.key==='q') activateShield(player1);
   if(e.key==='/') activateShield(player2);
 });
+document.addEventListener("keyup", e=>{ keys[e.key.toLowerCase()] = false; });
 
 /* ===== UI ===== */
 const scoreEl = document.getElementById("score");
@@ -154,32 +153,33 @@ function animate(){
     if(keys["arrowright"]) player2.position.x +=0.2;
   }
 
-  // Move bullets
-  bullets.forEach((b,i)=>{
-    b.position.z -=0.5;
-    // Hit enemies
-    enemies.forEach((e,j)=>{
+  for(let i=bullets.length-1;i>=0;i--){
+    let b = bullets[i];
+    b.position.z -= 0.5;
+
+    for(let j=enemies.length-1;j>=0;j--){
+      let e = enemies[j];
       if(b.position.distanceTo(e.position)<1){
-        scene.remove(b); scene.remove(e); bullets.splice(i,1); enemies.splice(j,1); score+=10;
+        scene.remove(b); scene.remove(e);
+        bullets.splice(i,1); enemies.splice(j,1); score+=10;
+        break;
       }
-    });
-    // Hit boss
+    }
+
     if(boss && b.position.distanceTo(boss.position)<2){
       bossHealth-=10; score+=20;
       scene.remove(b); bullets.splice(i,1);
       if(bossHealth<=0) scene.remove(boss);
     }
-  });
+  }
 
-  // Shields follow players
   shields.forEach(s=>s.position.copy(s.owner.position));
 
   updateUI();
   renderer.render(scene,camera);
 }
-animate();
 
-/* ===== RESIZE ===== */
+/* ===== WINDOW RESIZE ===== */
 window.addEventListener("resize", ()=>{
   camera.aspect = window.innerWidth/window.innerHeight;
   camera.updateProjectionMatrix();
