@@ -2,200 +2,594 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>QuantumClash 3D Fixed</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>I Love You Baccha 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
-body { margin:0; overflow:hidden; background:#111; font-family:Arial,sans-serif; }
-canvas { position:fixed; top:0; left:0; z-index:1; }
-header { position:fixed; top:0; width:100%; padding:12px; background:#0ff; color:#111; font-weight:bold; text-align:center; z-index:10; }
-#ui { position:fixed; top:60px; left:10px; color:#0ff; z-index:10; }
-#ui div { margin-bottom:6px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #1a0010;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* FLOATING HEARTS BG */
+  .hearts-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .fheart {
+    position: absolute;
+    bottom: -60px;
+    font-size: 24px;
+    animation: floatUp linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+    100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+  }
+
+  /* ===== START SCREEN ===== */
+  .start-screen {
+    text-align: center;
+    animation: fadeUp 0.7s ease;
+  }
+
+  .start-screen .big-heart {
+    font-size: 90px;
+    display: block;
+    animation: heartbeat 1.2s ease-in-out infinite;
+  }
+
+  @keyframes heartbeat {
+    0%,100% { transform: scale(1); }
+    14%      { transform: scale(1.2); }
+    28%      { transform: scale(1); }
+    42%      { transform: scale(1.15); }
+    56%      { transform: scale(1); }
+  }
+
+  .start-screen h1 {
+    font-family: 'Pacifico', cursive;
+    font-size: 34px;
+    color: #ff6b9d;
+    margin: 14px 0 6px;
+    text-shadow: 0 0 20px #ff6b9d88;
+  }
+
+  .start-screen .sub {
+    font-size: 15px;
+    color: #ffb3cc;
+    margin-bottom: 6px;
+  }
+
+  .kisses-row {
+    font-size: 28px;
+    letter-spacing: 4px;
+    margin: 14px 0 28px;
+    animation: shake 2s infinite;
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-4px); }
+    40%      { transform: translateX(4px); }
+    60%      { transform: translateX(-3px); }
+    80%      { transform: translateX(3px); }
+  }
+
+  .btn-start {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #ff6b9d, #ff3366);
+    border: none;
+    border-radius: 50px;
+    font-size: 19px;
+    font-weight: 900;
+    color: #fff;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    box-shadow: 0 8px 30px rgba(255,51,102,0.5);
+    transition: transform 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-start:active { transform: scale(0.97); }
+
+  /* ===== PROGRESS ===== */
+  .progress-wrap { margin-bottom: 18px; }
+
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    color: #ff99bb;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b9d, #ff3366);
+    border-radius: 50px;
+    transition: width 0.5s ease;
+  }
+
+  /* ===== QUESTION SCREEN ===== */
+  .question-screen { animation: fadeUp 0.4s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-card {
+    background: rgba(255,107,157,0.08);
+    border: 1.5px solid rgba(255,107,157,0.25);
+    border-radius: 28px;
+    padding: 28px 22px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+  }
+
+  .q-number {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff6b9d, #ff3366);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 5px 16px;
+    border-radius: 50px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .q-emoji {
+    font-size: 52px;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .q-text {
+    font-size: 19px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.4;
+  }
+
+  /* ===== OPTIONS ===== */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin-bottom: 16px;
+  }
+
+  .option-btn {
+    background: rgba(255,107,157,0.08);
+    border: 2px solid rgba(255,107,157,0.2);
+    border-radius: 16px;
+    padding: 15px 18px;
+    color: #ffccdd;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+  }
+
+  .option-btn:active { transform: scale(0.98); }
+
+  .option-btn.correct {
+    background: rgba(0,230,118,0.15);
+    border-color: #00e676;
+    color: #00e676;
+  }
+
+  .option-btn.wrong {
+    background: rgba(255,82,82,0.15);
+    border-color: #ff5252;
+    color: #ff5252;
+  }
+
+  .option-btn.disabled { cursor: default; }
+
+  .opt-label {
+    width: 32px; height: 32px;
+    background: rgba(255,107,157,0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .option-btn.correct .opt-label { background: #00e676; color: #000; }
+  .option-btn.wrong .opt-label   { background: #ff5252; color: #fff; }
+
+  /* ===== FEEDBACK ===== */
+  .feedback {
+    text-align: center;
+    padding: 13px;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: none;
+    animation: pop 0.3s ease;
+  }
+
+  @keyframes pop {
+    0%   { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+
+  .feedback.show        { display: block; }
+  .feedback.correct-fb  { background: rgba(0,230,118,0.12); color: #00e676; border: 1px solid #00e676; }
+  .feedback.wrong-fb    { background: rgba(255,82,82,0.12);  color: #ff5252; border: 1px solid #ff5252; }
+
+  /* ===== NEXT BTN ===== */
+  .btn-next {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #ff6b9d, #c0392b);
+    border: none;
+    border-radius: 16px;
+    font-size: 17px;
+    font-weight: 900;
+    color: #fff;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    box-shadow: 0 8px 24px rgba(255,51,102,0.35);
+    display: none;
+    transition: transform 0.2s;
+  }
+
+  .btn-next.show { display: block; animation: fadeUp 0.3s ease; }
+  .btn-next:active { transform: scale(0.97); }
+
+  /* ===== RESULT SCREEN ===== */
+  .result-screen {
+    text-align: center;
+    animation: fadeUp 0.6s ease;
+  }
+
+  .result-emoji {
+    font-size: 80px;
+    display: block;
+    margin-bottom: 10px;
+    animation: heartbeat 1.2s infinite;
+  }
+
+  .result-screen h2 {
+    font-family: 'Pacifico', cursive;
+    font-size: 28px;
+    color: #ff6b9d;
+    margin-bottom: 6px;
+    text-shadow: 0 0 16px #ff6b9d66;
+  }
+
+  .love-text {
+    font-size: 22px;
+    color: #ffb3cc;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+
+  .kisses-result {
+    font-size: 30px;
+    letter-spacing: 5px;
+    margin: 10px 0 16px;
+  }
+
+  .score-box {
+    background: rgba(255,107,157,0.1);
+    border: 1.5px solid rgba(255,107,157,0.25);
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 18px;
+    backdrop-filter: blur(10px);
+  }
+
+  .score-big {
+    font-size: 60px;
+    font-weight: 900;
+    background: linear-gradient(90deg, #ff6b9d, #ff3366);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+
+  .score-label {
+    color: #ff99bb;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  .result-msg {
+    color: #ffccdd;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .btn-restart {
+    width: 100%;
+    padding: 17px;
+    background: linear-gradient(135deg, #ff6b9d, #ff3366);
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 900;
+    color: #fff;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    box-shadow: 0 8px 24px rgba(255,51,102,0.4);
+  }
+
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<header>QuantumClash 3D Fixed</header>
+<!-- Floating hearts background -->
+<div class="hearts-bg" id="heartsBg"></div>
 
-<div id="ui">
-  <div id="score">Score: 0</div>
-  <div id="p1">Player1 Health: 100</div>
-  <div id="p2">Player2 Health: 100</div>
-  <div id="boss">Boss Health: 200</div>
+<div class="container">
+
+  <!-- START SCREEN -->
+  <div class="start-screen" id="startScreen">
+    <span class="big-heart">💖</span>
+    <h1>I Love You Baccha!</h1>
+    <p class="sub">💌 A little quiz just for you 💌</p>
+    <div class="kisses-row">💋 😘 😗 😚 😙 💋</div>
+    <button class="btn-start" onclick="startQuiz()">💕 Start with Love 💕</button>
+  </div>
+
+  <!-- QUESTION SCREEN -->
+  <div class="question-screen hidden" id="questionScreen">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span id="qCounter">Question 1 of 5</span>
+        <span id="scoreTrack">💕 0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <span class="q-number" id="qNumber">Q1</span>
+      <span class="q-emoji" id="qEmoji">💖</span>
+      <div class="q-text" id="qText"></div>
+    </div>
+
+    <div class="options" id="optionsContainer"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">Next 💕</button>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div class="result-screen hidden" id="resultScreen">
+    <span class="result-emoji" id="resultEmoji">💖</span>
+    <h2 id="resultTitle">Aww Baccha!</h2>
+    <div class="love-text">I Love You So Much! 💕</div>
+    <div class="kisses-result">💋 😘 😗 😚 😙</div>
+    <div class="score-box">
+      <div class="score-big" id="scoreBig">0/5</div>
+      <div class="score-label">Your Love Score 💖</div>
+    </div>
+    <p class="result-msg" id="resultMsg"></p>
+    <button class="btn-restart" onclick="restartQuiz()">💋 Play Again Baccha 💋</button>
+  </div>
+
 </div>
 
-<script type="module">
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/controls/OrbitControls.js";
-import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/loaders/GLTFLoader.js";
+<script>
+  // ---- FLOATING HEARTS ----
+  const heartsBg = document.getElementById('heartsBg');
+  const heartEmojis = ['💖','💕','💗','💓','💞','💝','😘','💋','❤️','🥰'];
 
-/* ===== SCENE SETUP ===== */
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x111111);
-
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-camera.position.set(0, 15, 25);
-
-const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableRotate = false;
-controls.enablePan = false;
-
-/* ===== LIGHTS ===== */
-scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-dirLight.position.set(10,20,10);
-scene.add(dirLight);
-
-/* ===== FLOOR ===== */
-const floor = new THREE.Mesh(new THREE.PlaneGeometry(60,60), new THREE.MeshStandardMaterial({color:0x222222}));
-floor.rotation.x = -Math.PI/2;
-scene.add(floor);
-
-/* ===== VARIABLES ===== */
-const loader = new GLTFLoader();
-let player1, player2, boss, enemyModel;
-let bullets = [], enemies = [], shields = [];
-let score = 0, p1Health = 100, p2Health = 100, bossHealth = 200;
-const keys = {};
-
-/* ===== LOAD MODELS (CORS-ENABLED) ===== */
-function loadModel(url){
-  return new Promise((resolve,reject)=>{
-    loader.load(url, gltf=>resolve(gltf.scene), undefined, err=>reject(err));
-  });
-}
-
-const modelURL = "https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb";
-
-Promise.all([
-  loadModel(modelURL), // player1
-  loadModel(modelURL), // player2
-  loadModel(modelURL), // boss
-  loadModel(modelURL)  // enemy template
-]).then(models=>{
-  [player1, player2, boss, enemyModel] = models;
-
-  player1.scale.set(2,2,2); player1.position.set(-5,0,0); scene.add(player1);
-  player2.scale.set(2,2,2); player2.position.set(5,0,0); scene.add(player2);
-  boss.scale.set(3,3,3); boss.position.set(0,0,-15); scene.add(boss);
-
-  animate();
-}).catch(err => console.error("Model loading error:", err));
-
-/* ===== SPAWN ENEMY ===== */
-function spawnEnemy(){
-  if(!enemyModel) return;
-  let e = enemyModel.clone();
-  e.scale.set(1.5,1.5,1.5);
-  e.position.set(Math.random()*20-10,0,Math.random()*-20);
-  scene.add(e);
-  enemies.push(e);
-}
-setInterval(spawnEnemy,7000);
-
-/* ===== BULLETS ===== */
-function shootBullet(player){
-  if(!player) return;
-  let b = new THREE.Mesh(new THREE.SphereGeometry(0.2,8,8), new THREE.MeshStandardMaterial({color:0xffff00, emissive:0xffff00}));
-  b.position.copy(player.position).add(new THREE.Vector3(0,1,0));
-  b.owner = player;
-  scene.add(b);
-  bullets.push(b);
-}
-
-/* ===== SHIELDS ===== */
-function activateShield(player){
-  if(!player) return;
-  let s = new THREE.Mesh(new THREE.SphereGeometry(1.5,16,16), new THREE.MeshStandardMaterial({color:0x00ffff, transparent:true, opacity:0.4}));
-  s.position.copy(player.position);
-  s.owner = player;
-  scene.add(s);
-  shields.push(s);
-  setTimeout(()=>{scene.remove(s); shields.splice(shields.indexOf(s),1);},3000);
-}
-
-/* ===== INPUT ===== */
-document.addEventListener("keydown", e=>{
-  keys[e.key.toLowerCase()] = true;
-  if(e.key===' ') shootBullet(player1);
-  if(e.key==='Enter') shootBullet(player2);
-  if(e.key==='q') activateShield(player1);
-  if(e.key==='/') activateShield(player2);
-});
-document.addEventListener("keyup", e=>{
-  keys[e.key.toLowerCase()] = false;
-});
-
-/* ===== UI ===== */
-const scoreEl = document.getElementById("score");
-const p1El = document.getElementById("p1");
-const p2El = document.getElementById("p2");
-const bossEl = document.getElementById("boss");
-function updateUI(){
-  scoreEl.textContent = "Score: "+score;
-  p1El.textContent = "Player1 Health: "+p1Health;
-  p2El.textContent = "Player2 Health: "+p2Health;
-  bossEl.textContent = "Boss Health: "+bossHealth;
-}
-
-/* ===== ANIMATION LOOP ===== */
-function animate(){
-  requestAnimationFrame(animate);
-
-  if(player1){
-    if(keys["w"]) player1.position.z -=0.2;
-    if(keys["s"]) player1.position.z +=0.2;
-    if(keys["a"]) player1.position.x -=0.2;
-    if(keys["d"]) player1.position.x +=0.2;
-  }
-  if(player2){
-    if(keys["arrowup"]) player2.position.z -=0.2;
-    if(keys["arrowdown"]) player2.position.z +=0.2;
-    if(keys["arrowleft"]) player2.position.x -=0.2;
-    if(keys["arrowright"]) player2.position.x +=0.2;
+  function spawnHeart() {
+    const h = document.createElement('div');
+    h.className = 'fheart';
+    h.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+    h.style.left = Math.random() * 100 + 'vw';
+    h.style.fontSize = (16 + Math.random() * 20) + 'px';
+    const dur = 5 + Math.random() * 6;
+    h.style.animationDuration = dur + 's';
+    h.style.animationDelay = '0s';
+    heartsBg.appendChild(h);
+    setTimeout(() => h.remove(), dur * 1000);
   }
 
-  // Move bullets backward loop
-  for(let i=bullets.length-1;i>=0;i--){
-    let b = bullets[i];
-    b.position.z -= 0.5;
+  setInterval(spawnHeart, 600);
 
-    // Check enemies
-    for(let j=enemies.length-1;j>=0;j--){
-      let e = enemies[j];
-      if(b.position.distanceTo(e.position)<1){
-        scene.remove(b); scene.remove(e);
-        bullets.splice(i,1);
-        enemies.splice(j,1);
-        score += 10;
-        break;
-      }
+  // ---- QUIZ DATA ----
+  const questions = [
+    {
+      emoji: "💖",
+      question: "How much do I love you? 💕",
+      options: ["A little bit 🙂", "So so much 😊", "More than everything 😍", "To the moon & back 🌙"],
+      answer: 3
+    },
+    {
+      emoji: "😘",
+      question: "What do I think about you every day? 🥰",
+      options: ["Nothing at all 😅", "Just sometimes 🤔", "Always & forever 💞", "Only on weekends 😂"],
+      answer: 2
+    },
+    {
+      emoji: "💋",
+      question: "How many kisses do you deserve? 😚",
+      options: ["Zero 😐", "Just one 😗", "A hundred 😙", "Infinite kisses! 💋💋💋"],
+      answer: 3
+    },
+    {
+      emoji: "🌹",
+      question: "You are my...? 🥺",
+      options: ["Just a friend 😐", "Someone nice 🙂", "My everything 💖", "My whole universe 🌌💕"],
+      answer: 3
+    },
+    {
+      emoji: "🥰",
+      question: "What happens when I see your smile? 😍",
+      options: ["Nothing 😶", "I feel okay 🙂", "My heart melts 💓", "I fall in love all over again 😘💖"],
+      answer: 3
+    }
+  ];
+
+  let current = 0, score = 0, answered = false;
+
+  function startQuiz() {
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('questionScreen').classList.remove('hidden');
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    answered = false;
+    const q = questions[current];
+
+    document.getElementById('qNumber').textContent = `Q${current + 1}`;
+    document.getElementById('qEmoji').textContent = q.emoji;
+    document.getElementById('qText').textContent = q.question;
+    document.getElementById('qCounter').textContent = `Question ${current + 1} of ${questions.length}`;
+    document.getElementById('scoreTrack').textContent = `💕 ${score}`;
+    document.getElementById('progressFill').style.width = `${(current / questions.length) * 100}%`;
+
+    const fb = document.getElementById('feedback');
+    fb.className = 'feedback';
+    fb.textContent = '';
+
+    const btnNext = document.getElementById('btnNext');
+    btnNext.className = 'btn-next';
+    btnNext.textContent = current === questions.length - 1 ? 'See Result 💖' : 'Next 💕';
+
+    const labels = ['A','B','C','D'];
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = `<span class="opt-label">${labels[i]}</span> ${opt}`;
+      btn.onclick = () => selectAnswer(i, btn);
+      container.appendChild(btn);
+    });
+
+    // re-trigger animation
+    const qs = document.getElementById('questionScreen');
+    qs.style.animation = 'none';
+    void qs.offsetWidth;
+    qs.style.animation = 'fadeUp 0.4s ease';
+  }
+
+  function selectAnswer(index, btn) {
+    if (answered) return;
+    answered = true;
+
+    const q = questions[current];
+    const allBtns = document.querySelectorAll('.option-btn');
+    allBtns.forEach(b => b.classList.add('disabled'));
+
+    const fb = document.getElementById('feedback');
+    const btnNext = document.getElementById('btnNext');
+
+    if (index === q.answer) {
+      btn.classList.add('correct');
+      score++;
+      fb.textContent = '✅ Correct! Aww so sweet! 😘💕';
+      fb.className = 'feedback correct-fb show';
+    } else {
+      btn.classList.add('wrong');
+      allBtns[q.answer].classList.add('correct');
+      fb.textContent = '❌ Nahi! But I love you anyway! 😂💋';
+      fb.className = 'feedback wrong-fb show';
     }
 
-    // Check boss
-    if(boss && b.position.distanceTo(boss.position)<2){
-      bossHealth -= 10; score += 20;
-      scene.remove(b); bullets.splice(i,1);
-      if(bossHealth<=0) scene.remove(boss);
-    }
+    document.getElementById('scoreTrack').textContent = `💕 ${score}`;
+    btnNext.className = 'btn-next show';
   }
 
-  // Shields follow players
-  shields.forEach(s=>s.position.copy(s.owner.position));
+  function nextQuestion() {
+    current++;
+    if (current >= questions.length) showResult();
+    else loadQuestion();
+  }
 
-  updateUI();
-  renderer.render(scene,camera);
-}
+  function showResult() {
+    document.getElementById('questionScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.remove('hidden');
 
-/* ===== WINDOW RESIZE ===== */
-window.addEventListener("resize", ()=>{
-  camera.aspect = window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+    document.getElementById('scoreBig').textContent = `${score}/${questions.length}`;
+
+    let emoji, title, msg;
+    const pct = score / questions.length;
+
+    if (pct === 1) {
+      emoji = '💖'; title = 'Perfect Baccha!';
+      msg = 'You are absolutely perfect! I love you sooooo much! 😍💋💋💋 Infinite kisses for you! 😘😘😘';
+    } else if (pct >= 0.8) {
+      emoji = '🥰'; title = 'So Cute Baccha!';
+      msg = 'Almost perfect just like you! I love you to the moon and back! 💕😘💋';
+    } else if (pct >= 0.6) {
+      emoji = '😘'; title = 'Aww Baccha!';
+      msg = 'You are my heart! No matter what I love you always! 💗💋😗';
+    } else {
+      emoji = '😂'; title = 'Silly Baccha!';
+      msg = 'Haha you are so silly and I love that about you! 😂💖 So many kisses! 💋😙😚';
+    }
+
+    document.getElementById('resultEmoji').textContent = emoji;
+    document.getElementById('resultTitle').textContent = title;
+    document.getElementById('resultMsg').textContent = msg;
+  }
+
+  function restartQuiz() {
+    current = 0; score = 0;
+    document.getElementById('resultScreen').classList.add('hidden');
+    document.getElementById('questionScreen').classList.remove('hidden');
+    loadQuestion();
+  }
 </script>
-
 </body>
 </html>
+
